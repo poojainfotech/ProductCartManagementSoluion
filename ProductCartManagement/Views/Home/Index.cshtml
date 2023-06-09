@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        function getProductDetails() {
+            var pathArray = window.location.pathname.split('/');
+            var rootUrl = window.location.protocol + '//' + window.location.host + "/" + pathArray[1];
+            var productInformation = $('#mainTable');
+            var htmlCode = '';
+            $.ajax({
+                type: 'GET',
+                url: rootUrl + 'api/Product/',
+                data: {
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: 'json',
+                success: function (data) {
+                    productInformation.empty();
+                    htmlCode = htmlCode +
+                        '<thead>' +
+                        '<tr>' +
+                        '<td style="width:170px;"><b class="font-weight-bolder text-primary">S.N.</b></td>' +
+                        '<td style="width:170px;"><b class="font-weight-bolder text-primary">Product</b></td>' +
+                        '<td style="width:170px;"><b class="font-weight-bolder text-primary">Description</b></td>' +
+                        '<td style="width:170px;"><b class="font-weight-bolder text-primary">Created</b></td>' +
+                        '<td style="width:170px;"><b class="font-weight-bolder text-primary">Price</b></td>' +
+                        '<td style="width:170px;"><b class="font-weight-bolder text-primary">Action</b></td>' +
+                        '<tr>' +
+                        '</tr>' +
+                        '</thead>'
+                    productInformation.append(htmlCode)
+                    htmlCode = '';
+                    var i = 0;
+                    $.each(data, function (index, val) {
+                        i = i + 1;                        
+                            htmlCode = htmlCode + '<tr>';
+                            htmlCode = htmlCode + '<td style="width:170px;">' + i + '</td>';
+                            htmlCode = htmlCode + '<td style="width:170px;">' + val.productName + '</td>';
+                            htmlCode = htmlCode + '<td style="width:170px;">' + val.productDiscription + '</td>';
+                            htmlCode = htmlCode + '<td style="width:170px;">' + val.productCreationDate.substring(0, 4) + '/' + val.productCreationDate.substring(4, 6) + '/' + val.productCreationDate.substring(6, 8); + '</td>';
+                            htmlCode = htmlCode + '<td style="width:170px;">' + val.productPrice + '</td>';
+                            htmlCode = htmlCode + '<td style="width:210px;">';
+                            htmlCode = htmlCode + '<table style="border-spacing: 7px; width: 200px; margin: auto; border-collapse: separate;">';
+                            htmlCode = htmlCode + '<tr>';
+                            htmlCode = htmlCode + '<td><a class="btn btn-success text-light" id="btnEdit" href="/Home/ShowDetails?postId=' + val.id + '">Show</a></td>';
+                            htmlCode = htmlCode + '<td><a class="btn btn-success text-light" id="btnEdit" href="/Home/EditProduct?postId=' + val.id + '">Edit</a></td>';
+                            htmlCode = htmlCode + '<td><input class="btn btn-danger text-light" id="btnDelete" type="submit" value="Delete" onclick="deleteProductDetails(' + val.id + ');" /></td>';
+                            htmlCode = htmlCode + '</tr>';
+                            htmlCode = htmlCode + '</table>';
+                            htmlCode = htmlCode + '</td>';
+                            htmlCode = htmlCode + '</tr>';
+                        });
+                    productInformation.append(htmlCode)
+                },
+                error: function (xhr, status, error) {
+                    productInformation.html("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText);
+                }
+            });
+        }
+
+        getProductDetails();
+        function editProductDetails(id) {
+            var tr = confirm('Are you sure, you want to edit the record.');
+            if (tr) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Home/EditProduct',
+                    data: { id: id },
+                    success: function (result) {
+                        getProductDetails();
+                    },
+                    error: function () {
+                        alert('Failed to delete the data');
+                        console.log('Failed ');
+                    }
+                })
+            }
+        }
+
+        function deleteProductDetails(id) {
+
+            var tr = confirm('Are you sure, you want to delete the record.');
+            if (tr) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Home/DeleteProduct/'+ id,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: { id: id },
+                    success: function (result) {
+                        getProductDetails();
+                    },
+                    error: function () {
+                        alert('Failed to delete the data');
+                        console.log('Failed ');
+                    }
+                })
+            }
+        }
+
+    </script>
+}
+
+<div class="text-center">
+    <table id="mainTable" border="1">
+    </table>
+    <input id="hiddenUserName" type="hidden" value="1" />
+</div>

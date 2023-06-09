@@ -1,0 +1,61 @@
+﻿@model ProductCartManagement.Models.Product
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        function submitProduct() {
+            if ($("#name").val() === '' || $("#nameDiscription").val() === '' || $("#name").val() === '') {
+                alert('Input value is not valid.');
+                return false;
+            }
+            var data = $("#productForm").serialize();
+            $.ajax({
+                type: 'POST',
+                url: '/Home/AddProduct',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: data,
+                success: function (result) {
+                    alert('Successfully data save');
+                    window.location.href = "http://localhost:56252/";
+                },
+                error: function () {
+                    alert('Failed to save the Data');
+                }
+            })
+            
+        }
+
+    </script>
+}
+
+<h4 style="font-weight: bold; font-size: 20px; color: #1b6ec2;">Add Product Deatils</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="productForm" novalidate class="needs-validation">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label font-weight-bolder">Product Name :</label>
+                <input asp-for="ProductName" type="text" class="form-control" id="name" required />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductDiscription" class="control-label  font-weight-bolder">Product Discription :</label>
+                <input asp-for="ProductDiscription" type="text" class="form-control" id="nameDiscription" />
+                <span asp-validation-for="ProductDiscription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductPrice" class="control-label  font-weight-bolder">Product Price :</label>
+                <input asp-for="ProductPrice" type="number" class="form-control" id="productPrice" />
+                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="submitProduct()">Submit</button>
+                <a class="btn btn-primary" style="margin-right:10px;" asp-area="" asp-controller="Home" asp-action="Index">Back</a>
+            </div>
+        </form>
+    </div>
+</div>

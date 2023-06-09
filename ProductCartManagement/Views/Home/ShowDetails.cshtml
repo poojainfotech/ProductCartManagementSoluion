@@ -1,0 +1,62 @@
+﻿@model ProductCartManagement.Models.Product
+
+@section scripts{
+    <script type="text/javascript">
+        function getProductDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('postId');
+            $.ajax({
+                type: 'POST',
+                url: '/Home/GetProductDetails/' + id,
+                data: { id: id },
+                success: function (result) {
+                    $('#name').val(result.productName);
+                    $('#nameDiscription').val(result.productDiscription);
+                    $('#productPrice').val(result.productPrice);
+                    $('#id').val(result.id);
+                },
+                error: function () {
+                    alert('Failed to get the data');
+                }
+            });
+        }
+        $('#productPrice').ready(function () {
+            getProductDetails();
+        });
+        
+    </script>
+}
+
+<h4 style="font-weight: bold; font-size: 20px; color: #1b6ec2;">Product Deatils</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="productForm" novalidate class="needs-validation">
+            <table>
+                <tr>
+                    <td><label><b>Product ID : </b></label> </td>
+                    <td><input id="id" type="text" readonly /></td>
+                </tr>
+                <tr>
+                    <td><label><b>Product Name : </b></label> </td>
+                    <td><input id="name" type="text" readonly /></td>
+                </tr>
+                <tr>
+                    <td><label><b>Product Discription : </b></label> </td>
+                    <td><input id="nameDiscription" type="text" readonly /></td>
+                </tr>
+                <tr>
+                    <td><label><b>Produc Price : </b></label> </td>
+                    <td><input id="productPrice" type="text" readonly /></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div class="form-group">
+                            <a class="btn btn-primary" style="margin-right:10px;" asp-area="" asp-controller="Home" asp-action="Index">Back</a>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>

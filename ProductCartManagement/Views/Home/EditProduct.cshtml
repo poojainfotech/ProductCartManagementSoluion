@@ -1,0 +1,84 @@
+﻿@model ProductCartManagement.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+@section scripts{
+    <script type="text/javascript">
+        function getProductDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('postId');
+            var tr = confirm('Are you sure, you want to edit the record.');
+            if (tr) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/Home/GetProductDetails/' + id,
+                    data: { id: id },
+                    success: function (result) {
+                        $('#name').val(result.productName);
+                        $('#nameDiscription').val(result.productDiscription);
+                        $('#productPrice').val(result.productPrice);
+                        $('#id').val(result.id);
+                    },
+                    error: function () {
+                        alert('Failed to get the data');
+                    }
+                });
+            }
+            else {
+                window.location.href = "http://localhost:56252/";
+            }
+        }
+        getProductDetails();
+        function editProduct() {
+            var data = $("#productForm").serialize();
+            const urlParams = new URLSearchParams(window.location.search);
+            data.id = urlParams.get('postId');
+            $.ajax({
+                type: 'POST',
+                url: '/Home/EditProduct',
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                data: data,
+                success: function (result) {
+                    alert('Successfully data updated');
+                    window.location.href = "http://localhost:56252/";
+                },
+                error: function () {
+                    alert('Failed to update the Data');
+                }
+            })
+        }
+    </script>
+}
+
+<h4 style="font-weight: bold; font-size: 20px; color: #1b6ec2;">Edit Product Deatils</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="productForm" novalidate class="needs-validation">
+            <input asp-for="ID" id="id" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label font-weight-bolder">Product Name :</label>
+                <input asp-for="ProductName" type="text" class="form-control" id="name" required />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductDiscription" class="control-label  font-weight-bolder">Product Discription :</label>
+                <input asp-for="ProductDiscription" type="text" class="form-control" id="nameDiscription" />
+                <span asp-validation-for="ProductDiscription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductPrice" class="control-label  font-weight-bolder">Product Price :</label>
+                <input asp-for="ProductPrice" type="number" class="form-control" id="productPrice" />
+                <span asp-validation-for="ProductPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" onclick="editProduct()">Update</button>
+                <a class="btn btn-primary" style="margin-right:10px;" asp-area="" asp-controller="Home" asp-action="Index">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
